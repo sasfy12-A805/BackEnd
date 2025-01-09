@@ -21,5 +21,4 @@ jobs:
           host: ${{ secrets.HOST }} # 내가 변수로 저장한 ip
           username: ${{ secrets.USER }} # 내가 변수로 저장한 User
           script: |
-            cd test
-
+            mkdir test2
