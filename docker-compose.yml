@@ -1,0 +1,9 @@
+services:
+  app:
+    build:
+      context: . # 현재 디렉토리를 빌드 컨텍스트로 사용
+      dockerfile: Dockerfile  # 사용할 Dockerfile 지정
+    image: backend  # 빌드될 이미지 이름
+    container_name: backend     # 실행될 컨테이너 이름
+    ports:
+      - "8080:8080" # 호스트의 8080 포트를 컨테이너의 8080 포트에 매핑
