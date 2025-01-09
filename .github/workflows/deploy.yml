@@ -9,11 +9,18 @@ on:
 
 
 jobs:
-  SSH:
+  build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
+      
+      
+      - name: Docker Build and Push
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest .
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker push username/app-name:latest
+          
       - name: ssh to ec2
         uses: appleboy/ssh-action@master
         with:
@@ -21,4 +28,7 @@ jobs:
           host: ${{ secrets.HOST }} # 내가 변수로 저장한 ip
           username: ${{ secrets.USER }} # 내가 변수로 저장한 User
           script: |
-            mkdir test2
+            docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest
+            docker stop ${{ secrets.DOCKER_IMAGE_NAME }} || true
+            docker rm ${{ secrets.DOCKER_IMAGE_NAME }} || true
+            docker run -d --name ${{ secrets.DOCKER_IMAGE_NAME }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest
