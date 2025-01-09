@@ -17,9 +17,10 @@ jobs:
       
       - name: Docker Build and Push
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest .
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker push username/app-name:latest
+          docker -v
+          docker build -t dreamingj98/backend:latest .
+          docker login -u dreamingj98 -p ${{ secrets.DOCKER_PASSWORD }}
+          docker push dreamingj98/backend:latest
           
       - name: ssh to ec2
         uses: appleboy/ssh-action@master
