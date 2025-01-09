@@ -1,0 +1,35 @@
+name: GitHub Actions Demo
+
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+
+on: 
+  push:
+    branches:
+      - main
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      
+      - name: Docker Build and Push
+        run: |
+          docker -v
+          docker build -t dreamingj98/backend:latest .
+          docker login -u dreamingj98 -p ${{ secrets.DOCKER_PASSWORD }}
+          docker push dreamingj98/backend:latest
+          
+      - name: ssh to ec2
+        uses: appleboy/ssh-action@master
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }} # 내가 변수로 저장한 pem key
+          host: ${{ secrets.HOST }} # 내가 변수로 저장한 ip
+          username: ${{ secrets.USER }} # 내가 변수로 저장한 User
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest
+            docker stop ${{ secrets.DOCKER_IMAGE_NAME }} || true
+            docker rm ${{ secrets.DOCKER_IMAGE_NAME }} || true
+            docker run -d --name ${{ secrets.DOCKER_IMAGE_NAME }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest
